@@ -1,7 +1,6 @@
 // Fill in what happens inside your popup.html
 // Example, clicking "Remember Page" will parse the current URL information and save it.
 
-var mySavedTabs = [];
 var myTabDict = {};
 
 // Collects the current tab's URL
@@ -20,13 +19,8 @@ function simple(){
     });
 }
 
-// Opens the saved URL in a new tab
+// Opens the saved URLs in a new tab
 function myOpen(){
-    //window.open(document.getElementById("hehe").innerHTML)
-
-    // var select = document.getElementById("example-select");
-    // folder = select.options[select.selectedIndex].text
-
     var folder = document.getElementById("newName").value
 
     if (folder != ""){
@@ -42,7 +36,7 @@ function openAllTabsFromFolder(folder){
         url: myTabDict[folder]
     });
     // below will open tabs in the same window
-    
+
     // for(url in myTabDict[folder]) {
     //     chrome.tabs.create({
     //         url: myTabDict[folder][url]
@@ -54,9 +48,6 @@ function openAllTabsFromFolder(folder){
 function saveCurrentTab(){
     var url = document.getElementById("hehe").innerHTML
     var folder = document.getElementById("newName").value
-    // if (!document.getElementById("openLinks").disabled){
-    //     mySavedTabs.push(url)
-    // }
 
     // if you don't write a folder name, it'll use the selected one
     // from the dropdown
@@ -70,8 +61,36 @@ function saveCurrentTab(){
         populateSelection();
     }
     addTabToFolder(url, folder)
-
+    saveData();
     console.log(myTabDict)
+}
+
+// Saves all the tabs from the current window into a folder
+function saveWindow(){
+    var folder = document.getElementById("newName").value
+    if (folder == ""){
+        var select = document.getElementById("example-select");
+        folder = select.options[select.selectedIndex].text
+    }
+    
+    // try to put it into the dictionary instead
+    if (createNewFolder(folder)){
+        populateSelection();
+    }
+
+    chrome.windows.getAll({populate:true},function(windows){
+        windows.forEach(function(window){
+          window.tabs.forEach(function(tab){
+            //collect all of the urls here
+            console.log(tab.url);
+
+            
+            addTabToFolder(tab.url, folder)
+            saveData();
+            console.log(myTabDict)
+          });
+        });
+      });
 }
 
 // creates a new Folder for tabs
@@ -98,11 +117,24 @@ function populateSelection(){
     }
 }
 
+function saveData(){
+    chrome.storage.local.set({'tabDict': myTabDict}, function() {
+        console.log('Value is set to ' + myTabDict);
+      });
+}
 
 // Activate all the buttons
 document.getElementById("clickMe").addEventListener('click',simple);
 document.getElementById("openLinks").addEventListener('click',myOpen);
 document.getElementById("saveTab").addEventListener('click',saveCurrentTab);
+document.getElementById("saveWindow").addEventListener('click',saveWindow);
 
+
+chrome.storage.local.get(['tabDict'], function(result) {
+    console.log('Value currently is ' + result.key);
+    if (result.key){
+        myTabDict = result.key;
+    }
+  });
 
 
