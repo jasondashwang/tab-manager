@@ -131,9 +131,10 @@ document.getElementById("saveWindow").addEventListener('click',saveWindow);
 
 
 chrome.storage.local.get(['tabDict'], function(result) {
-    console.log('Value currently is ' + result.key);
-    if (result.key){
-        myTabDict = result.key;
+    console.log('Value currently is ' + result["tabDict"]);
+    if (result["tabDict"]){
+        myTabDict = result["tabDict"];
+        populateSelection();
     }
   });
 
