@@ -56,12 +56,14 @@ function saveCurrentTab(){
         folder = select.options[select.selectedIndex].text
     }
     
-    // try to put it into the dictionary instead
+    // try to put it into the dictionary
     if (createNewFolder(folder)){
         populateSelection();
     }
-    addTabToFolder(url, folder)
-    saveData();
+    if (!myTabDict[folder].includes(url)){
+        addTabToFolder(url, folder)
+        saveData();
+    }
     console.log(myTabDict)
 }
 
@@ -84,10 +86,11 @@ function saveWindow(){
             //collect all of the urls here
             console.log(tab.url);
 
-            
-            addTabToFolder(tab.url, folder)
-            saveData();
-            console.log(myTabDict)
+            // make sure you're not adding repeats
+            if (!myTabDict[folder].includes(tab.url)){
+                addTabToFolder(tab.url, folder)
+                saveData();
+            }
           });
         });
       });
@@ -117,6 +120,15 @@ function populateSelection(){
     }
 }
 
+// delete all the contents of a folder, and the folder itself
+function deleteFolder(){
+    var badFolder = document.getElementById("newName").value;
+    delete myTabDict[badFolder];
+    saveData();
+    populateSelection();
+    console.log(myTabDict)
+}
+
 function saveData(){
     chrome.storage.local.set({'tabDict': myTabDict}, function() {
         console.log('Value is set to ' + myTabDict);
@@ -128,8 +140,9 @@ document.getElementById("clickMe").addEventListener('click',simple);
 document.getElementById("openLinks").addEventListener('click',myOpen);
 document.getElementById("saveTab").addEventListener('click',saveCurrentTab);
 document.getElementById("saveWindow").addEventListener('click',saveWindow);
+document.getElementById("delFolder").addEventListener('click',deleteFolder);
 
-
+// Get the tabs from storage and set them. 
 chrome.storage.local.get(['tabDict'], function(result) {
     console.log('Value currently is ' + result["tabDict"]);
     if (result["tabDict"]){
