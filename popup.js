@@ -24,39 +24,33 @@ function tryCreateNewFolder(key){
 }
 
 function showTabsInFolder(folder){
-    console.log("will show tabs in the folder: ")
-    console.log(folder)
 
+    // hide the folders view and show the urls view
     toggle_visibility("folders-homepage");
     toggle_visibility("urls");
+    // populate the urls view with the urls in the current folder
     updateURLS(folder);
+    // title the current folder name
     document.getElementById("curr-folder-name").innerHTML = folder;
 
 }
 
-// Opens the saved URLs in a new tab
-function myOpen(){
+// Opens all the tabs from a folder in a new window
+function openAllTabsFromFolder(){
     var folder = document.getElementById("curr-folder-name").innerHTML
 
     if (folder != ""){
-        console.log(folder)
-        openAllTabsFromFolder(folder)
-    }
-}
-
-// Opens all the tabs from a folder in a new window
-function openAllTabsFromFolder(folder){
+        chrome.windows.create({
+            url: myTabDict[folder]
+        });
+        // below will open tabs in the same window
     
-    chrome.windows.create({
-        url: myTabDict[folder]
-    });
-    // below will open tabs in the same window
-
-    // for(url in myTabDict[folder]) {
-    //     chrome.tabs.create({
-    //         url: myTabDict[folder][url]
-    //     });
-    // }
+        // for(url in myTabDict[folder]) {
+        //     chrome.tabs.create({
+        //         url: myTabDict[folder][url]
+        //     });
+        // }
+    }
 }
 
 // Saves the saved URL in a local list
@@ -70,9 +64,7 @@ function saveCurrentTab(){
             addTabToFolder(url, folder)
             saveData();
             updateURLS(folder);
-        }
-        console.log(myTabDict)
-        
+        }        
     });
     
 }
@@ -83,20 +75,20 @@ function saveWindow(){
 
     chrome.windows.getAll({populate:true},function(windows){
         windows.forEach(function(window){
-          window.tabs.forEach(function(tab){
             //collect all of the urls here
-            console.log(tab.url);
+          window.tabs.forEach(function(tab){
 
             // make sure you're not adding repeats
             if (!myTabDict[folder].includes(tab.url)){
                 addTabToFolder(tab.url, folder)
                 saveData();
+                updateURLS(folder); // here so that I can see all the tabs without needing exit
             }
           });
         });
       });
-      // why can't i see the urls appear?
-      updateURLS(folder);
+      // why can't i see the urls appear? seems more efficient to have it here, but...
+      // updateURLS(folder);
 }
 
 function addTabToFolder(url, folder){
@@ -109,7 +101,6 @@ function deleteFolder(){
     delete myTabDict[badFolder];
     saveData();
     updateFolders();
-    console.log(myTabDict)
 }
 
 function saveData(){
@@ -164,14 +155,7 @@ function makeULforURLS(array) {
     for(var i = 0; i < array.length; i++) {
         // Create the list item:
         var item = document.createElement('li');
-
-        // Set its contents:
-        // console.log(array[array]) //undefined
-        // console.log(array[i]) // #
-        // console.log(array[array[i]]) //#
-        // console.log(array.array) //undefined
         
-        console.log(array)
         item.appendChild(document.createTextNode(array[i]));
 
         // Add it to the list:
@@ -183,9 +167,8 @@ function makeULforURLS(array) {
 }
 
 function updateFolders(){
-    // first remove all the list items, then populate it with the existing
-    // folder names
-    // Get the <ul> element with id="myList"
+    // first remove all the list items, then populate it with the existing folder names
+    // Get the <ul> element with id="folders-list"
     var list = document.getElementById("folders-list");
 
     // As long as <ul> has a child node, remove it
@@ -193,7 +176,6 @@ function updateFolders(){
         list.removeChild(list.firstChild);
     }
     document.getElementById('folders-list').appendChild(makeUL(Object.keys(myTabDict)));
-    //addListeners(); //delete
 }
 
 function updateURLS(folder){
@@ -208,7 +190,7 @@ function updateURLS(folder){
 
 // Activate all the buttons
 document.getElementById("createFolder").addEventListener('click',createNewFolder);
-document.getElementById("openLinks").addEventListener('click',myOpen);
+document.getElementById("openLinks").addEventListener('click',openAllTabsFromFolder);
 document.getElementById("saveTab").addEventListener('click',saveCurrentTab);
 document.getElementById("saveWindow").addEventListener('click',saveWindow);
 document.getElementById("delFolder").addEventListener('click',deleteFolder);
@@ -220,6 +202,8 @@ document.getElementById("openFoldersView").addEventListener('click',function(){
 // Get the tabs from storage and set them. 
 chrome.storage.local.get(['tabDict'], function(result) {
     console.log('Value currently is ' + result["tabDict"]);
+    
+    // if there is data, set it to the current dictionary value
     if (result["tabDict"]){
         myTabDict = result["tabDict"];
         updateFolders();
