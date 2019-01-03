@@ -182,7 +182,6 @@ function makeULforURLS(array) {
     return list;
 }
 
-
 function updateFolders(){
     // first remove all the list items, then populate it with the existing
     // folder names
