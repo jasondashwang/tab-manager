@@ -4,14 +4,24 @@
 var myTabDict = {};
 
 // Collects the current tab's URL
-function simple(){
+function createNewFolder(){
     console.log("clicked");
     var folder = document.getElementById("newName").value;
     console.log(folder);
-    createNewFolder(folder);
-    populateSelection();
+    tryCreateNewFolder(folder);
+    updateFolders();
 }
 
+// creates a new Folder for tabs
+function tryCreateNewFolder(key){
+    if (myTabDict[key]){
+        alert("Folder name already taken! Try a different one.");
+        return false;
+    } else {
+        myTabDict[key] = []
+        return true;
+    }
+}
 
 function showTabsInFolder(folder){
     console.log("will show tabs in the folder: ")
@@ -23,7 +33,6 @@ function showTabsInFolder(folder){
     document.getElementById("curr-folder-name").innerHTML = folder;
 
 }
-
 
 // Opens the saved URLs in a new tab
 function myOpen(){
@@ -57,20 +66,6 @@ function saveCurrentTab(){
 
         var folder = document.getElementById("curr-folder-name").innerHTML
 
-        // if you don't write a folder name, it'll use the selected one
-        // from the dropdown
-        // if (folder == ""){
-        //     var select = document.getElementById("example-select");
-        //     folder = select.options[select.selectedIndex].text
-        // }
-        
-        // try to put it into the dictionary
-        // if (createNewFolder(folder)){
-        //     populateSelection();
-        // }
-        console.log(myTabDict[folder])
-        console.log(url)
-        console.log(folder)
         if (!myTabDict[folder].includes(url)){
             addTabToFolder(url, folder)
             saveData();
@@ -85,15 +80,6 @@ function saveCurrentTab(){
 // Saves all the tabs from the current window into a folder
 function saveWindow(){
     var folder = document.getElementById("curr-folder-name").innerHTML
-    // if (folder == ""){
-    //     var select = document.getElementById("example-select");
-    //     folder = select.options[select.selectedIndex].text
-    // }
-    
-    // try to put it into the dictionary instead
-    // if (createNewFolder(folder)){
-    //     populateSelection();
-    // }
 
     chrome.windows.getAll({populate:true},function(windows){
         windows.forEach(function(window){
@@ -113,29 +99,8 @@ function saveWindow(){
       updateURLS(folder);
 }
 
-// creates a new Folder for tabs
-function createNewFolder(key){
-    if (myTabDict[key]){
-        return false;
-    } else {
-        myTabDict[key] = []
-        return true;
-    }
-}
-
 function addTabToFolder(url, folder){
     myTabDict[folder].push(url)
-}
-
-// use the myTabDict keys to populate a dropdown menu to select 
-// an existing folder to save the current URL to
-function populateSelection(){
-    var select = document.getElementById("example-select");
-    select.options.length = 0; // reset the selections
-    for(folder in myTabDict) {
-        select.options[select.options.length] = new Option(folder, folder);
-    }
-    updateFolders();
 }
 
 // delete all the contents of a folder, and the folder itself
@@ -143,7 +108,7 @@ function deleteFolder(){
     var badFolder = document.getElementById("newName").value;
     delete myTabDict[badFolder];
     saveData();
-    populateSelection();
+    updateFolders();
     console.log(myTabDict)
 }
 
@@ -153,8 +118,7 @@ function saveData(){
       });
 }
 
-
-// TODO!!
+// Switch between Folders list view and within folder view
 function toggle_visibility(id) {
     var e = document.getElementById(id);
     if(e.style.display == 'block')
@@ -219,16 +183,6 @@ function makeULforURLS(array) {
 }
 
 
-// // adds onClick listeners to each of the folder list buttons
-// function addListeners() {
-//     var butts = document.getElementsByClassName(".folders");
-//     for (var i = 0; i < butts.length; i++) {
-// 		butts[i].addEventListener("click", function(){
-//             showTabsInFolder(this.value)
-//         });
-// 	}
-// }
-
 function updateFolders(){
     // first remove all the list items, then populate it with the existing
     // folder names
@@ -254,7 +208,7 @@ function updateURLS(folder){
 }
 
 // Activate all the buttons
-document.getElementById("createFolder").addEventListener('click',simple);
+document.getElementById("createFolder").addEventListener('click',createNewFolder);
 document.getElementById("openLinks").addEventListener('click',myOpen);
 document.getElementById("saveTab").addEventListener('click',saveCurrentTab);
 document.getElementById("saveWindow").addEventListener('click',saveWindow);
@@ -269,7 +223,7 @@ chrome.storage.local.get(['tabDict'], function(result) {
     console.log('Value currently is ' + result["tabDict"]);
     if (result["tabDict"]){
         myTabDict = result["tabDict"];
-        populateSelection();
+        updateFolders();
     }
   });
 
