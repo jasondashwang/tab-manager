@@ -6,22 +6,28 @@ var myTabDict = {};
 // Collects the current tab's URL
 function simple(){
     console.log("clicked");
-    chrome.tabs.getSelected(null,function(tab) {
-        var tablink = tab.url;
-
-        if (document.getElementById("hehe").innerHTML == tablink){
-            document.getElementById("hehe").innerHTML = "https://google.com";
-            //document.getElementById("openLinks").disabled = true;
-        } else{
-            document.getElementById("hehe").innerHTML = tablink;
-            //document.getElementById("openLinks").disabled = false;
-        }
-    });
+    var folder = document.getElementById("newName").value;
+    console.log(folder);
+    createNewFolder(folder);
+    populateSelection();
 }
+
+
+function showTabsInFolder(folder){
+    console.log("will show tabs in the folder: ")
+    console.log(folder)
+
+    toggle_visibility("folders-homepage");
+    toggle_visibility("urls");
+    updateURLS(folder);
+    document.getElementById("curr-folder-name").innerHTML = folder;
+
+}
+
 
 // Opens the saved URLs in a new tab
 function myOpen(){
-    var folder = document.getElementById("newName").value
+    var folder = document.getElementById("curr-folder-name").innerHTML
 
     if (folder != ""){
         console.log(folder)
@@ -46,39 +52,48 @@ function openAllTabsFromFolder(folder){
 
 // Saves the saved URL in a local list
 function saveCurrentTab(){
-    var url = document.getElementById("hehe").innerHTML
-    var folder = document.getElementById("newName").value
+    chrome.tabs.getSelected(null,function(tab) {
+        var url = tab.url;
 
-    // if you don't write a folder name, it'll use the selected one
-    // from the dropdown
-    if (folder == ""){
-        var select = document.getElementById("example-select");
-        folder = select.options[select.selectedIndex].text
-    }
+        var folder = document.getElementById("curr-folder-name").innerHTML
+
+        // if you don't write a folder name, it'll use the selected one
+        // from the dropdown
+        // if (folder == ""){
+        //     var select = document.getElementById("example-select");
+        //     folder = select.options[select.selectedIndex].text
+        // }
+        
+        // try to put it into the dictionary
+        // if (createNewFolder(folder)){
+        //     populateSelection();
+        // }
+        console.log(myTabDict[folder])
+        console.log(url)
+        console.log(folder)
+        if (!myTabDict[folder].includes(url)){
+            addTabToFolder(url, folder)
+            saveData();
+            updateURLS(folder);
+        }
+        console.log(myTabDict)
+        
+    });
     
-    // try to put it into the dictionary
-    if (createNewFolder(folder)){
-        populateSelection();
-    }
-    if (!myTabDict[folder].includes(url)){
-        addTabToFolder(url, folder)
-        saveData();
-    }
-    console.log(myTabDict)
 }
 
 // Saves all the tabs from the current window into a folder
 function saveWindow(){
-    var folder = document.getElementById("newName").value
-    if (folder == ""){
-        var select = document.getElementById("example-select");
-        folder = select.options[select.selectedIndex].text
-    }
+    var folder = document.getElementById("curr-folder-name").innerHTML
+    // if (folder == ""){
+    //     var select = document.getElementById("example-select");
+    //     folder = select.options[select.selectedIndex].text
+    // }
     
     // try to put it into the dictionary instead
-    if (createNewFolder(folder)){
-        populateSelection();
-    }
+    // if (createNewFolder(folder)){
+    //     populateSelection();
+    // }
 
     chrome.windows.getAll({populate:true},function(windows){
         windows.forEach(function(window){
@@ -94,6 +109,8 @@ function saveWindow(){
           });
         });
       });
+      // why can't i see the urls appear?
+      updateURLS(folder);
 }
 
 // creates a new Folder for tabs
@@ -118,6 +135,7 @@ function populateSelection(){
     for(folder in myTabDict) {
         select.options[select.options.length] = new Option(folder, folder);
     }
+    updateFolders();
 }
 
 // delete all the contents of a folder, and the folder itself
@@ -135,12 +153,116 @@ function saveData(){
       });
 }
 
+
+// TODO!!
+function toggle_visibility(id) {
+    var e = document.getElementById(id);
+    if(e.style.display == 'block')
+       e.style.display = 'none';
+    else
+       e.style.display = 'block';
+}
+
+// This will populate the folders-homepage with the current available ones
+// modify this to be applicable for both folders and urls?
+function makeUL(array) {
+    // Create the list element:
+    var list = document.createElement('ul');
+
+    for(var i = 0; i < array.length; i++) {
+        // Create the list item:
+        var item = document.createElement('li');
+
+        var btn = document.createElement("button");
+        btn.className = ".folders"; 
+        btn.value = array[i];
+        var t = document.createTextNode(array[i]);
+        btn.appendChild(t);
+        btn.addEventListener("click", function(){
+            showTabsInFolder(this.value)
+        });
+
+        // Set its contents:
+        item.appendChild(btn);
+
+        // Add it to the list:
+        list.appendChild(item);
+    }
+    
+    // Finally, return the constructed list:
+    return list;
+}
+
+function makeULforURLS(array) {
+    // Create the list element:
+    var list = document.createElement('ul');
+
+    for(var i = 0; i < array.length; i++) {
+        // Create the list item:
+        var item = document.createElement('li');
+
+        // Set its contents:
+        // console.log(array[array]) //undefined
+        // console.log(array[i]) // #
+        // console.log(array[array[i]]) //#
+        // console.log(array.array) //undefined
+        
+        console.log(array)
+        item.appendChild(document.createTextNode(array[i]));
+
+        // Add it to the list:
+        list.appendChild(item);
+    }
+    
+    // Finally, return the constructed list:
+    return list;
+}
+
+
+// // adds onClick listeners to each of the folder list buttons
+// function addListeners() {
+//     var butts = document.getElementsByClassName(".folders");
+//     for (var i = 0; i < butts.length; i++) {
+// 		butts[i].addEventListener("click", function(){
+//             showTabsInFolder(this.value)
+//         });
+// 	}
+// }
+
+function updateFolders(){
+    // first remove all the list items, then populate it with the existing
+    // folder names
+    // Get the <ul> element with id="myList"
+    var list = document.getElementById("folders-list");
+
+    // As long as <ul> has a child node, remove it
+    while (list.hasChildNodes()) {   
+        list.removeChild(list.firstChild);
+    }
+    document.getElementById('folders-list').appendChild(makeUL(Object.keys(myTabDict)));
+    //addListeners(); //delete
+}
+
+function updateURLS(folder){
+    var list = document.getElementById("urls-list");
+
+    // As long as <ul> has a child node, remove it
+    while (list.hasChildNodes()) {   
+        list.removeChild(list.firstChild);
+    }
+    document.getElementById('urls-list').appendChild(makeULforURLS(myTabDict[folder]));
+}
+
 // Activate all the buttons
-document.getElementById("clickMe").addEventListener('click',simple);
+document.getElementById("createFolder").addEventListener('click',simple);
 document.getElementById("openLinks").addEventListener('click',myOpen);
 document.getElementById("saveTab").addEventListener('click',saveCurrentTab);
 document.getElementById("saveWindow").addEventListener('click',saveWindow);
 document.getElementById("delFolder").addEventListener('click',deleteFolder);
+document.getElementById("openFoldersView").addEventListener('click',function(){
+    toggle_visibility("folders-homepage");
+    toggle_visibility("urls");
+}); //back button
 
 // Get the tabs from storage and set them. 
 chrome.storage.local.get(['tabDict'], function(result) {

@@ -16,15 +16,38 @@
     </style>
   </head>
   <body>
-    Fill in your design here!
-    <p id="hehe"></p> 
-    <input type="button" value="Click to change text" id="clickMe"></input>
-    <input type="button" value="Open folder" id="openLinks"></input>
-    <input type="button" value="Save Tab" id="saveTab"></input>
-    <input type="button" value="Save Window" id="saveWindow"></input>
-    <input value="Enter New Folder Name Here - Love Jason" id="newName"></input>
-    <select id="example-select"></select>
-    <input type="button" value="Delete Folder" id="delFolder"></input>
+    <div id="folders-homepage" style="display:block;"> 
+      <h2>Your Folders:</h2>
+        <div id="folders-list">
+
+        </div>
+
+        <div> Options:
+          <p id="hehe"></p> 
+          <input value="Enter New Folder Name Here - Love Jason" id="newName"></input>
+          <input type="button" value="Create Folder" id="createFolder"></input>
+          <select id="example-select"></select>
+          <input type="button" value="Delete Folder" id="delFolder"></input>
+        </div>
+    </div>
+
+
+    <div id="urls" style="display:none;">
+      <h2 id="curr-folder-name"></h2>
+
+      <div id="urls-list"> Urls in this folder:
+        <p>a url will be here!</p>
+
+      </div>
+      <div> Options:
+        <input type="button" value="Back" id="openFoldersView"></input>
+        <input type="button" value="Save Tab" id="saveTab"></input>
+        <input type="button" value="Save Window" id="saveWindow"></input>
+        <input type="button" value="Open folder" id="openLinks"></input>
+      </div>
+
+    </div>
+
     <script src="popup.js"></script>
   </body>
 </html>
