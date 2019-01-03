@@ -191,7 +191,6 @@ function updateURLS(folder){
 
 
 $(document).ready(function() {
-    
     // Activate all the buttons
     $("#createFolder").click(createNewFolder);
     $("#openLinks").click(openAllTabsFromFolder);
