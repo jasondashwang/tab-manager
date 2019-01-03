@@ -188,26 +188,32 @@ function updateURLS(folder){
     document.getElementById('urls-list').appendChild(makeULforURLS(myTabDict[folder]));
 }
 
-// Activate all the buttons
-document.getElementById("createFolder").addEventListener('click',createNewFolder);
-document.getElementById("openLinks").addEventListener('click',openAllTabsFromFolder);
-document.getElementById("saveTab").addEventListener('click',saveCurrentTab);
-document.getElementById("saveWindow").addEventListener('click',saveWindow);
-document.getElementById("delFolder").addEventListener('click',deleteFolder);
-document.getElementById("openFoldersView").addEventListener('click',function(){
-    toggle_visibility("folders-homepage");
-    toggle_visibility("urls");
-}); //back button
 
-// Get the tabs from storage and set them. 
-chrome.storage.local.get(['tabDict'], function(result) {
-    console.log('Value currently is ' + result["tabDict"]);
+
+$(document).ready(function() {
     
-    // if there is data, set it to the current dictionary value
-    if (result["tabDict"]){
-        myTabDict = result["tabDict"];
-        updateFolders();
-    }
-  });
+    // Activate all the buttons
+    $("#createFolder").click(createNewFolder);
+    $("#openLinks").click(openAllTabsFromFolder);
+    $("#saveTab").click(saveCurrentTab);
+    $("#saveWindow").click(saveWindow);
+    $("#delFolder").click(deleteFolder);
+    $("#openFoldersView").click(function(){
+        toggle_visibility("folders-homepage");
+        toggle_visibility("urls");
+    }); //back button
 
+    // Get the tabs from storage and set them. 
+    chrome.storage.local.get(['tabDict'], function(result) {
+        console.log('Value currently is ' + result["tabDict"]);
+        
+        // if there is data, set it to the current dictionary value
+        if (result["tabDict"]){
+            myTabDict = result["tabDict"];
+            updateFolders();
+        }
+    });
+});
+
+  
 
