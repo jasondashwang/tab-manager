@@ -5,9 +5,7 @@ var myTabDict = {};
 
 // Collects the current tab's URL
 function createNewFolder(){
-    console.log("clicked");
     var folder = document.getElementById("newName").value;
-    console.log(folder);
     tryCreateNewFolder(folder);
     updateFolders();
 }
@@ -103,6 +101,14 @@ function deleteFolder(){
     updateFolders();
 }
 
+function deleteURL(folder, url){
+
+    var index = myTabDict[folder].indexOf(url);
+    myTabDict[folder].splice(index, 1);
+    saveData();
+    updateURLS(folder);
+}
+
 function saveData(){
     chrome.storage.local.set({'tabDict': myTabDict}, function() {
         console.log('Value is set to ' + myTabDict);
@@ -155,6 +161,10 @@ function makeULforURLS(array) {
     for(var i = 0; i < array.length; i++) {
         // Create the list item:
         var item = document.createElement('li');
+
+        item.id = array[i]
+        // item.value = array[i];
+        console.log(array[i])
         
         item.appendChild(document.createTextNode(array[i]));
 
@@ -186,9 +196,37 @@ function updateURLS(folder){
         list.removeChild(list.firstChild);
     }
     document.getElementById('urls-list').appendChild(makeULforURLS(myTabDict[folder]));
+    createRemoveURLOption();
 }
 
+function createRemoveURLOption(){
+    // Create a "close" button and append it to each list item
+    var myNodelist = document.getElementById("urls-list").getElementsByTagName("LI");
+    var i;
+    for (i = 0; i < myNodelist.length; i++) {
+        var span = document.createElement("SPAN");
+        var txt = document.createTextNode("\u00D7");
+        span.className = "close";
+        span.appendChild(txt);
+        myNodelist[i].appendChild(span);
+    }
 
+    // Click on a close button to hide the current list item
+    var close = document.getElementsByClassName("close");
+    var i;
+    for (i = 0; i < close.length; i++) {
+        close[i].onclick = function() {
+            var list = document.getElementById("urls-list");
+            var currFolder = document.getElementById("curr-folder-name").innerHTML
+            var div = this.parentElement;
+            console.log(div.id)
+            // div.style.display = "none";
+            // list.removeChild(div);
+            deleteURL(currFolder, div.id);
+
+    }
+    }
+}
 
 $(document).ready(function() {
     // Activate all the buttons
