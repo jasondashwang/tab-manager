@@ -71,8 +71,8 @@ function saveCurrentTab(){
 function saveWindow(){
     var folder = document.getElementById("curr-folder-name").innerHTML
 
-    chrome.windows.getAll({populate:true},function(windows){
-        windows.forEach(function(window){
+    chrome.windows.getCurrent({populate:true},function(window){
+        // windows.forEach(function(window){
             //collect all of the urls here
           window.tabs.forEach(function(tab){
 
@@ -83,7 +83,7 @@ function saveWindow(){
                 updateURLS(folder); // here so that I can see all the tabs without needing exit
             }
           });
-        });
+        // });
       });
       // why can't i see the urls appear? seems more efficient to have it here, but...
       // updateURLS(folder);
@@ -135,13 +135,18 @@ function makeUL(array) {
         var item = document.createElement('li');
 
         var btn = document.createElement("button");
-        btn.className = ".folders"; 
+        btn.className = "folder-buttons"; 
         btn.value = array[i];
         var t = document.createTextNode(array[i]);
         btn.appendChild(t);
         btn.addEventListener("click", function(){
             showTabsInFolder(this.value)
         });
+
+        // this seems to be the only place I can access and set the attributes and styles of these buttons
+        // var hexArray = ['#5FAAF2','#288FF2','#027BF0', '#9CC9F6', '#F9CEE7', '#EEA1CD', '#E68BBE', '#FDE4FZ', '#F4B8DA']
+        // var randomColor = hexArray[Math.floor(Math.random() * hexArray.length)];
+        // btn.style.backgroundColor = randomColor;
 
         // Set its contents:
         item.appendChild(btn);
@@ -208,6 +213,7 @@ function createRemoveURLOption(){
         var txt = document.createTextNode("\u00D7");
         span.className = "close";
         span.appendChild(txt);
+        span.style.color = "red";
         myNodelist[i].appendChild(span);
     }
 
@@ -216,15 +222,10 @@ function createRemoveURLOption(){
     var i;
     for (i = 0; i < close.length; i++) {
         close[i].onclick = function() {
-            var list = document.getElementById("urls-list");
             var currFolder = document.getElementById("curr-folder-name").innerHTML
             var div = this.parentElement;
-            console.log(div.id)
-            // div.style.display = "none";
-            // list.removeChild(div);
             deleteURL(currFolder, div.id);
-
-    }
+        }
     }
 }
 
