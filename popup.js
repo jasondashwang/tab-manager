@@ -1,16 +1,43 @@
-// Fill in what happens inside your popup.html
-// Example, clicking "Remember Page" will parse the current URL information and save it.
-
+/**
+ * The main dictionary that stores all the data. An example of the structure is:
+ * 
+ * var myTabDict = {
+        folder_name: {
+            urlList: [{title:'Hello - Google Search', url: 'https://www.google.com/search?q=Hello'}],
+            urlSet: ["https://www.google.com/search?q=hello"]
+        }
+    }
+ * 
+ * folder_name is a string
+ * urlList is a list of myURL Objects. It is only ever defined and creates in saveCurrentTab and saveWindow.
+ * urlSet is a list of URL strings.
+ * 
+ * An example of the myURL Object structure is:
+ * 
+ * var myURL = {
+            url: "https://www.google.com/search?q=hello",
+            title: 'Hello - Google Search'
+        };
+ * 
+ */
 var myTabDict = {};
 
-// Collects the current tab's URL
+/**
+ * Creates a new folder according to the input value of the
+ * "newName", and updates the list of folders
+ */
 function createNewFolder(){
     var folder = document.getElementById("newName").value;
     tryCreateNewFolder(folder);
     updateFolders();
 }
 
-// creates a new Folder for tabs
+/**
+ * If doesn't already exist, creates a new folder in the dictionary. Initializes a
+ * urlList (a list of myURL Objects) and a urlSet (a list of url strings) for this folder.
+ * 
+ * @param  {string} key The name of the folder
+ */
 function tryCreateNewFolder(key){
     if (myTabDict[key]){
         alert("Folder name already taken! Try a different one.");
@@ -24,9 +51,15 @@ function tryCreateNewFolder(key){
     }
 }
 
+/**
+ * Hides the Folders div and Shows the URLs div within a particular folder.
+ * Populates the list of urls for that folder.
+ * 
+ * @param  {string} folder The name of the folder to open
+ */
 function showTabsInFolder(folder){
 
-    // hide the folders view and show the urls view
+    // folders-homepage starts out being visible, and urls being invisible
     toggle_visibility("folders-homepage");
     toggle_visibility("urls");
     // populate the urls view with the urls in the current folder
@@ -36,7 +69,9 @@ function showTabsInFolder(folder){
 
 }
 
-// Opens all the tabs from a folder in a new window
+/**
+ * Opens all the tabs from the current folder in a new window
+ */
 function openAllTabsFromFolder(){
     var folder = document.getElementById("curr-folder-name").innerHTML
 
@@ -54,9 +89,12 @@ function openAllTabsFromFolder(){
     }
 }
 
-// Saves the saved URL in a local list
+/**
+ * Saves the currently active tab in the open folder
+ */
 function saveCurrentTab(){
     chrome.tabs.getSelected(null,function(tab) {
+        // create url object
         var myURL = {
             url: tab.url,
             title: tab.title
@@ -72,13 +110,15 @@ function saveCurrentTab(){
     
 }
 
-// Saves all the tabs from the current window into a folder
+
+/**
+ * Saves all the tabs from the current window into currently open folder
+ */
 function saveWindow(){
     var folder = document.getElementById("curr-folder-name").innerHTML
 
     chrome.windows.getCurrent({populate:true},function(window){
-        // windows.forEach(function(window){
-            //collect all of the urls here
+        //collect all of the urls here
           window.tabs.forEach(function(tab){
 
             var myURL = {
@@ -93,18 +133,26 @@ function saveWindow(){
                 updateURLS(folder); // here so that I can see all the tabs without needing exit
             }
           });
-        // });
       });
       // why can't i see the urls appear? seems more efficient to have it here, but...
       // updateURLS(folder);
 }
 
+/**
+ * Adds a website to a particular folder.
+ * 
+ * @param  {myURL} url The URL Object of the current tab
+ * @param  {string} folder The current folder where the tab will be saved
+ */
 function addTabToFolder(url, folder){
     myTabDict[folder].urlList.push(url);
     myTabDict[folder].urlSet.push(url.url)
 }
 
-// delete all the contents of a folder, and the folder itself
+/**
+ * Deletes all the contents of a folder, and the folder itself.
+ * Saves the data and updates front-end view.
+ */
 function deleteFolder(){
     var badFolder = document.getElementById("newName").value;
     delete myTabDict[badFolder];
@@ -112,7 +160,13 @@ function deleteFolder(){
     updateFolders();
 }
 
-// url is the actual url
+/**
+ * Deletes the url string from the folder's set, and deletes the myURL Object
+ * from the folder's list. Saves the data, and updates the front-end view.
+ * 
+ * @param  {string} folder The folder from which to remove the URL
+ * @param  {string} url The actual url string
+ */
 function deleteURL(folder, url){
 
     // remove the URL from the "set"
@@ -125,6 +179,14 @@ function deleteURL(folder, url){
     updateURLS(folder);
 }
 
+/**
+ * Used by deleteURL to find the index of the myURL Object within the 
+ * urlList of URLObjects. If it doesn't exist within the list, then returns
+ * -1.
+ * 
+ * @param  {list} a The list in which to search
+ * @param  {myURL} obj The object to look for
+ */
 function searchForURLAndReturnIndex(a, obj){
     for (var i = 0; i < a.length; i++) {
         // if the url of the urlObject matches the url
@@ -135,13 +197,20 @@ function searchForURLAndReturnIndex(a, obj){
     return -1;
 }
 
+/**
+ * Saves the myTabDict in local Chrome storage.
+ */
 function saveData(){
     chrome.storage.local.set({'tabDict': myTabDict}, function() {
         console.log('Value is set to ' + myTabDict);
       });
 }
 
-// Switch between Folders list view and within folder view
+/**
+ * Switch between All Folders list view and Within-Folder (URLS) list view
+ * 
+ * @param  {string} id The HTML Object id whose view to change
+ */
 function toggle_visibility(id) {
     var e = document.getElementById(id);
     if(e.style.display == 'block')
@@ -150,8 +219,15 @@ function toggle_visibility(id) {
        e.style.display = 'block';
 }
 
-// This will populate the folders-homepage with the current available ones
-// modify this to be applicable for both folders and urls?
+
+/**
+ * Populates the folder-homepage with the currently available folders. Creates
+ * a <ul> list and for each folder in the myTabDict, creates a button list item.
+ * Each button represents a folder and has an onClick function to show the urls
+ * in it's respective folder.
+ * 
+ * @param  {list} array The list of folders to be displayed
+ */
 function makeUL(array) {
     // Create the list element:
     var list = document.createElement('ul');
@@ -185,7 +261,13 @@ function makeUL(array) {
     return list;
 }
 
-
+/**
+ * Populates the url page with the urls within the current folder. Creates
+ * a <ul> list and for each url in the folder, creates a hyperlinked <a> list item.
+ * Each list item displays the title of the website, and is hyperlinked with the url.
+ * 
+ * @param  {list} array The list of urls in the current folder to be displayed
+ */
 function makeULforURLS(array) {
     // Create the list element:
     var list = document.createElement('ul');
@@ -212,8 +294,11 @@ function makeULforURLS(array) {
     return list;
 }
 
+/**
+ * Updates the folders-homepage front-end view. Removes all the current list items
+ * and regenerates the list based on the current folders in the myTabDict.
+ */
 function updateFolders(){
-    // first remove all the list items, then populate it with the existing folder names
     // Get the <ul> element with id="folders-list"
     var list = document.getElementById("folders-list");
 
@@ -224,6 +309,13 @@ function updateFolders(){
     document.getElementById('folders-list').appendChild(makeUL(Object.keys(myTabDict)));
 }
 
+/**
+ * Updates the within-folder-urls front-end view. Removes all the current list items
+ * and regenerates the list based on the current urls in the folder. For each list item (website),
+ * it also creates an "x" to remove it individually.
+ * 
+ * @param  {string} folder
+ */
 function updateURLS(folder){
     var list = document.getElementById("urls-list");
 
@@ -238,6 +330,10 @@ function updateURLS(folder){
     
 }
 
+/**
+ * For each url in the urls list on the front-end-view, adds a red "x" with the 
+ * capability to individually remove that URL from the folder.
+ */
 function createRemoveURLOption(){
     // Create a "close" button and append it to each list item
     var myNodelist = document.getElementById("urls-list").getElementsByTagName("LI");
@@ -265,6 +361,7 @@ function createRemoveURLOption(){
 }
 
 $(document).ready(function() {
+    
     // Activate all the buttons
     $("#createFolder").click(createNewFolder);
     $("#openLinks").click(openAllTabsFromFolder);
