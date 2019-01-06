@@ -231,14 +231,17 @@ function toggle_visibility(id) {
 function makeUL(array) {
     // Create the list element:
     var list = document.createElement('ul');
+    list.className = "folders-list-ul";
 
     for(var i = 0; i < array.length; i++) {
         // Create the list item:
         var item = document.createElement('li');
-
+        item.style.padding = "5px";
         var btn = document.createElement("button");
         btn.className = "folder-buttons"; 
         btn.value = array[i];
+        // btn.style.height = 50;
+        // btn.style.width = 50;
         var t = document.createTextNode(array[i]);
         btn.appendChild(t);
         btn.addEventListener("click", function(){
@@ -249,6 +252,8 @@ function makeUL(array) {
         // var hexArray = ['#5FAAF2','#288FF2','#027BF0', '#9CC9F6', '#F9CEE7', '#EEA1CD', '#E68BBE', '#FDE4FZ', '#F4B8DA']
         // var randomColor = hexArray[Math.floor(Math.random() * hexArray.length)];
         // btn.style.backgroundColor = randomColor;
+
+        // btn.style.backgroundColor = '#F9CEE7'; 
 
         // Set its contents:
         item.appendChild(btn);
@@ -296,7 +301,8 @@ function makeULforURLS(array) {
 
 /**
  * Updates the folders-homepage front-end view. Removes all the current list items
- * and regenerates the list based on the current folders in the myTabDict.
+ * and regenerates the list based on the current folders in the myTabDict. It also
+ * calls a function to style the folder buttons.
  */
 function updateFolders(){
     // Get the <ul> element with id="folders-list"
@@ -307,6 +313,7 @@ function updateFolders(){
         list.removeChild(list.firstChild);
     }
     document.getElementById('folders-list').appendChild(makeUL(Object.keys(myTabDict)));
+    modifyFolderButtons();
 }
 
 /**
@@ -360,8 +367,19 @@ function createRemoveURLOption(){
     }
 }
 
+/**
+ * Adds styling to the folder buttons; runs each time folders must be refreshed.
+ */
+function modifyFolderButtons(){
+    $('.folder-buttons').css({"color":"green", 'height': '50px', 'width': '100px',
+     'border-radius': '10px', "font-size" : "12px"});
+     
+    $('.folders-list-ul').css({"list-style": "none"});
+
+}
+
 $(document).ready(function() {
-    
+
     // Activate all the buttons
     $("#createFolder").click(createNewFolder);
     $("#openLinks").click(openAllTabsFromFolder);
@@ -381,6 +399,7 @@ $(document).ready(function() {
         if (result["tabDict"]){
             myTabDict = result["tabDict"];
             updateFolders();
+            
         }
     });
 });
