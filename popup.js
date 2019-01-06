@@ -22,6 +22,9 @@
  */
 var myTabDict = {};
 
+var tempSavedFolderName = "";
+var tempNewFolderName = "";
+
 /**
  * Creates a new folder according to the input value of the
  * "newName", and updates the list of folders
@@ -36,14 +39,14 @@ function createNewFolder(){
  * If doesn't already exist, creates a new folder in the dictionary. Initializes a
  * urlList (a list of myURL Objects) and a urlSet (a list of url strings) for this folder.
  * 
- * @param  {string} key The name of the folder
+ * @param  {string} folder The name of the folder
  */
-function tryCreateNewFolder(key){
-    if (myTabDict[key]){
+function tryCreateNewFolder(folder){
+    if (myTabDict[folder]){
         alert("Folder name already taken! Try a different one.");
         return false;
     } else {
-        myTabDict[key] = {
+        myTabDict[folder] = {
             urlList: [],
             urlSet: []
         };
@@ -51,9 +54,21 @@ function tryCreateNewFolder(key){
     }
 }
 
+//TODO
+function renameFolder(currFolder, newFolder){
+    
+    myTabDict[newFolder] = myTabDict[currFolder]
+    delete myTabDict[currFolder];
+    saveData();
+    updateFolders();
+    tempSavedFolderName = "";
+    tempNewFolderName = "";
+
+}
 /**
  * Hides the Folders div and Shows the URLs div within a particular folder.
- * Populates the list of urls for that folder.
+ * Populates the list of urls for that folder. Also activates functionality
+ * to rename the current folder through mouse events.
  * 
  * @param  {string} folder The name of the folder to open
  */
@@ -66,6 +81,28 @@ function showTabsInFolder(folder){
     updateURLS(folder);
     // title the current folder name
     document.getElementById("curr-folder-name").innerHTML = folder;
+    // $("#curr-folder-name") 
+
+    // add functionality to rename the folder:
+    // 
+    document.getElementById("curr-folder-name").addEventListener("mouseover", function(){
+        this.contentEditable='true';
+    });
+
+    document.getElementById("curr-folder-name").addEventListener("focusout", function(){
+        this.contentEditable='false';
+        this.style.backgroundColor = "white";
+        if (tempSavedFolderName !== this.innerHTML){
+            if(tryCreateNewFolder(this.innerHTML)){
+                tempNewFolderName = this.innerHTML
+            }
+        }
+    });
+
+    document.getElementById("curr-folder-name").addEventListener("click", function(){
+        this.style.backgroundColor = "lightblue";
+        tempSavedFolderName = this.innerHTML
+    });
 
 }
 
@@ -244,9 +281,30 @@ function makeUL(array) {
         btn.className = "folder-buttons"; 
         btn.value = array[i];
         btn.appendChild(document.createTextNode(array[i]));
+        // $(btn).on("singleclick", function(e){
+        //     console.log("single-clicked here")
+        //     // showTabsInFolder(this.value)
+        //     showTabsInFolder(e.target.innerHTML)
+        // });
         btn.addEventListener("click", function(){
             showTabsInFolder(this.value)
         });
+        // btn.addEventListener("dblclick", function(){
+        //     console.log("double-clicked on ")
+        //     console.log(this.value)
+        // });
+
+        // $(btn).on("dblclick", function(){
+        //     console.log("double-clicked on ")
+        //     console.log(this.value)
+        //     console.log(document.getElementById("newName").value)
+        //     renameFolder(this.value, document.getElementById("newName").value)
+        // });
+        // btn.addEventListener("contextmenu", function(ev) {
+        //     ev.preventDefault();
+        //     alert('success!');
+        //     return false;
+        // }, false);
 
         // Set its contents:
         item.appendChild(btn);
@@ -383,6 +441,9 @@ $(document).ready(function() {
     $("#openFoldersView").click(function(){
         toggle_visibility("folders-homepage");
         toggle_visibility("urls");
+        if (tempNewFolderName !== ""){            
+            renameFolder(tempSavedFolderName, tempNewFolderName);
+        }
     }); //back button
 
     // Get the tabs from storage and set them. 
