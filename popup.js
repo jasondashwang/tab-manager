@@ -237,23 +237,16 @@ function makeUL(array) {
         // Create the list item:
         var item = document.createElement('li');
         item.style.padding = "5px";
+        item.className = "folders-list-li";
+
+        // create the button
         var btn = document.createElement("button");
         btn.className = "folder-buttons"; 
         btn.value = array[i];
-        // btn.style.height = 50;
-        // btn.style.width = 50;
-        var t = document.createTextNode(array[i]);
-        btn.appendChild(t);
+        btn.appendChild(document.createTextNode(array[i]));
         btn.addEventListener("click", function(){
             showTabsInFolder(this.value)
         });
-
-        // this seems to be the only place I can access and set the attributes and styles of these buttons
-        // var hexArray = ['#5FAAF2','#288FF2','#027BF0', '#9CC9F6', '#F9CEE7', '#EEA1CD', '#E68BBE', '#FDE4FZ', '#F4B8DA']
-        // var randomColor = hexArray[Math.floor(Math.random() * hexArray.length)];
-        // btn.style.backgroundColor = randomColor;
-
-        // btn.style.backgroundColor = '#F9CEE7'; 
 
         // Set its contents:
         item.appendChild(btn);
@@ -371,10 +364,11 @@ function createRemoveURLOption(){
  * Adds styling to the folder buttons; runs each time folders must be refreshed.
  */
 function modifyFolderButtons(){
-    $('.folder-buttons').css({"color":"green", 'height': '50px', 'width': '100px',
+    $('.folder-buttons').css({"color":"green", 'height': '50px', 'width': '70px',
      'border-radius': '10px', "font-size" : "12px"});
      
-    $('.folders-list-ul').css({"list-style": "none"});
+    $('.folders-list-ul').css({"list-style": "none", "display": "block"});
+    $('.folders-list-li').css({"display": "inline-block"});
 
 }
 
