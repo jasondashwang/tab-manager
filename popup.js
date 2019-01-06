@@ -16,7 +16,10 @@ function tryCreateNewFolder(key){
         alert("Folder name already taken! Try a different one.");
         return false;
     } else {
-        myTabDict[key] = []
+        myTabDict[key] = {
+            urlList: [],
+            urlSet: []
+        };
         return true;
     }
 }
@@ -39,7 +42,7 @@ function openAllTabsFromFolder(){
 
     if (folder != ""){
         chrome.windows.create({
-            url: myTabDict[folder]
+            url: myTabDict[folder].urlSet
         });
         // below will open tabs in the same window
     
@@ -54,12 +57,14 @@ function openAllTabsFromFolder(){
 // Saves the saved URL in a local list
 function saveCurrentTab(){
     chrome.tabs.getSelected(null,function(tab) {
-        var url = tab.url;
-
+        var myURL = {
+            url: tab.url,
+            title: tab.title
+        };
+        
         var folder = document.getElementById("curr-folder-name").innerHTML
-
-        if (!myTabDict[folder].includes(url)){
-            addTabToFolder(url, folder)
+        if (!myTabDict[folder].urlSet.includes(myURL.url)){
+            addTabToFolder(myURL, folder)
             saveData();
             updateURLS(folder);
         }        
@@ -76,9 +81,14 @@ function saveWindow(){
             //collect all of the urls here
           window.tabs.forEach(function(tab){
 
+            var myURL = {
+                url: tab.url,
+                title: tab.title
+            };
+
             // make sure you're not adding repeats
-            if (!myTabDict[folder].includes(tab.url)){
-                addTabToFolder(tab.url, folder)
+            if (!myTabDict[folder].urlSet.includes(myURL.url)){
+                addTabToFolder(myURL, folder)
                 saveData();
                 updateURLS(folder); // here so that I can see all the tabs without needing exit
             }
@@ -90,7 +100,8 @@ function saveWindow(){
 }
 
 function addTabToFolder(url, folder){
-    myTabDict[folder].push(url)
+    myTabDict[folder].urlList.push(url);
+    myTabDict[folder].urlSet.push(url.url)
 }
 
 // delete all the contents of a folder, and the folder itself
@@ -101,12 +112,27 @@ function deleteFolder(){
     updateFolders();
 }
 
+// url is the actual url
 function deleteURL(folder, url){
 
-    var index = myTabDict[folder].indexOf(url);
-    myTabDict[folder].splice(index, 1);
+    // remove the URL from the "set"
+    var indexSet = myTabDict[folder].urlSet.indexOf(url);
+    myTabDict[folder].urlSet.splice(index, 1);
+    // remove the urlObject from the urlList
+    var index = searchForURLAndReturnIndex(myTabDict[folder].urlList, url)
+    myTabDict[folder].urlList.splice(index, 1);
     saveData();
     updateURLS(folder);
+}
+
+function searchForURLAndReturnIndex(a, obj){
+    for (var i = 0; i < a.length; i++) {
+        // if the url of the urlObject matches the url
+        if (a[i].url === obj) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 function saveData(){
@@ -159,6 +185,7 @@ function makeUL(array) {
     return list;
 }
 
+
 function makeULforURLS(array) {
     // Create the list element:
     var list = document.createElement('ul');
@@ -167,11 +194,15 @@ function makeULforURLS(array) {
         // Create the list item:
         var item = document.createElement('li');
 
-        item.id = array[i]
-        // item.value = array[i];
-        console.log(array[i])
+        var content = document.createElement('a');
+
+        content.setAttribute('href',array[i].url);
+
+        content.innerHTML = array[i].title
+
+        item.id = array[i].url
         
-        item.appendChild(document.createTextNode(array[i]));
+        item.appendChild(content);
 
         // Add it to the list:
         list.appendChild(item);
@@ -200,8 +231,11 @@ function updateURLS(folder){
     while (list.hasChildNodes()) {   
         list.removeChild(list.firstChild);
     }
-    document.getElementById('urls-list').appendChild(makeULforURLS(myTabDict[folder]));
-    createRemoveURLOption();
+    if (myTabDict[folder].urlList.length != 0){
+        document.getElementById('urls-list').appendChild(makeULforURLS(myTabDict[folder].urlList));
+        createRemoveURLOption();
+    }
+    
 }
 
 function createRemoveURLOption(){
@@ -224,6 +258,7 @@ function createRemoveURLOption(){
         close[i].onclick = function() {
             var currFolder = document.getElementById("curr-folder-name").innerHTML
             var div = this.parentElement;
+            // div.id is just the url itself
             deleteURL(currFolder, div.id);
         }
     }
