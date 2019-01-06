@@ -22,8 +22,10 @@
  */
 var myTabDict = {};
 
+/**
+ * This is used when renaming folders.
+ */
 var tempSavedFolderName = "";
-var tempNewFolderName = "";
 
 /**
  * Creates a new folder according to the input value of the
@@ -54,7 +56,14 @@ function tryCreateNewFolder(folder){
     }
 }
 
-//TODO
+/**
+ * Renames a folder by creating a new one with the new name, 
+ * saving the contents of the current folder to it, and then deleting 
+ * the initial folder.
+ * 
+ * @param  {string} currFolder The current name of the folder
+ * @param  {string} newFolder The name the folder will be changed to
+ */
 function renameFolder(currFolder, newFolder){
     
     myTabDict[newFolder] = myTabDict[currFolder]
@@ -62,9 +71,8 @@ function renameFolder(currFolder, newFolder){
     saveData();
     updateFolders();
     tempSavedFolderName = "";
-    tempNewFolderName = "";
-
 }
+
 /**
  * Hides the Folders div and Shows the URLs div within a particular folder.
  * Populates the list of urls for that folder. Also activates functionality
@@ -81,10 +89,9 @@ function showTabsInFolder(folder){
     updateURLS(folder);
     // title the current folder name
     document.getElementById("curr-folder-name").innerHTML = folder;
-    // $("#curr-folder-name") 
 
     // add functionality to rename the folder:
-    // 
+
     document.getElementById("curr-folder-name").addEventListener("mouseover", function(){
         this.contentEditable='true';
     });
@@ -94,7 +101,9 @@ function showTabsInFolder(folder){
         this.style.backgroundColor = "white";
         if (tempSavedFolderName !== this.innerHTML){
             if(tryCreateNewFolder(this.innerHTML)){
-                tempNewFolderName = this.innerHTML
+                renameFolder(tempSavedFolderName, this.innerHTML);
+                updateURLS(this.innerHTML)
+
             }
         }
     });
@@ -281,30 +290,10 @@ function makeUL(array) {
         btn.className = "folder-buttons"; 
         btn.value = array[i];
         btn.appendChild(document.createTextNode(array[i]));
-        // $(btn).on("singleclick", function(e){
-        //     console.log("single-clicked here")
-        //     // showTabsInFolder(this.value)
-        //     showTabsInFolder(e.target.innerHTML)
-        // });
+
         btn.addEventListener("click", function(){
             showTabsInFolder(this.value)
         });
-        // btn.addEventListener("dblclick", function(){
-        //     console.log("double-clicked on ")
-        //     console.log(this.value)
-        // });
-
-        // $(btn).on("dblclick", function(){
-        //     console.log("double-clicked on ")
-        //     console.log(this.value)
-        //     console.log(document.getElementById("newName").value)
-        //     renameFolder(this.value, document.getElementById("newName").value)
-        // });
-        // btn.addEventListener("contextmenu", function(ev) {
-        //     ev.preventDefault();
-        //     alert('success!');
-        //     return false;
-        // }, false);
 
         // Set its contents:
         item.appendChild(btn);
@@ -441,9 +430,6 @@ $(document).ready(function() {
     $("#openFoldersView").click(function(){
         toggle_visibility("folders-homepage");
         toggle_visibility("urls");
-        if (tempNewFolderName !== ""){            
-            renameFolder(tempSavedFolderName, tempNewFolderName);
-        }
     }); //back button
 
     // Get the tabs from storage and set them. 
