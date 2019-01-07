@@ -95,6 +95,8 @@ function showTabsInFolder(folder){
     // mouseover to be able to edit the content
     document.getElementById("curr-folder-name").addEventListener("mouseover", function(){
         this.contentEditable='true';
+        // change the cursor so you know you can click there
+        $("#curr-folder-name").css({"cursor":"pointer"});
     });
 
     // click to save the current folder name for later, and change background to "edit-mode"
@@ -124,18 +126,10 @@ function showTabsInFolder(folder){
         // if you pressed "enter"
         if (e.keyCode === 13) {
             e.preventDefault();
-            // console.log(this.innerHTML)
-            // console.log(tempSavedFolderName)
-            // console.log(myTabDict)
+            // all you need to do is prevent it from adding an enter line
+            // and "focusout" of it so that the other event handler does the 
+            // renaming work
             this.contentEditable='false';
-            // this.style.backgroundColor = "white";
-            // if (tempSavedFolderName !== this.innerHTML){
-            //     if(tryCreateNewFolder(this.innerHTML)){
-            //         renameFolder(tempSavedFolderName, this.innerHTML);
-            //         updateURLS(this.innerHTML)
-
-            //     }
-            // }
         }
     });
 
