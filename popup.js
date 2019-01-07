@@ -92,25 +92,51 @@ function showTabsInFolder(folder){
 
     // add functionality to rename the folder:
 
+    // mouseover to be able to edit the content
     document.getElementById("curr-folder-name").addEventListener("mouseover", function(){
         this.contentEditable='true';
     });
 
-    document.getElementById("curr-folder-name").addEventListener("focusout", function(){
+    // click to save the current folder name for later, and change background to "edit-mode"
+    document.getElementById("curr-folder-name").addEventListener("click", function(){
+        this.style.backgroundColor = "lightblue";
+        tempSavedFolderName = this.innerHTML
+    });
+
+    // click elsewhere to rename the folder
+    $("#curr-folder-name").off('focusout').on('focusout', function() { // off because it was firing n+1 times
         this.contentEditable='false';
         this.style.backgroundColor = "white";
         if (tempSavedFolderName !== this.innerHTML){
             if(tryCreateNewFolder(this.innerHTML)){
                 renameFolder(tempSavedFolderName, this.innerHTML);
                 updateURLS(this.innerHTML)
-
+            }
+            else{
+                this.style.backgroundColor = "lightblue";
+                this.contentEditable='true';
             }
         }
     });
 
-    document.getElementById("curr-folder-name").addEventListener("click", function(){
-        this.style.backgroundColor = "lightblue";
-        tempSavedFolderName = this.innerHTML
+    // or press enter to rename the folder
+    document.getElementById("curr-folder-name").addEventListener("keydown", function(e){
+        // if you pressed "enter"
+        if (e.keyCode === 13) {
+            e.preventDefault();
+            // console.log(this.innerHTML)
+            // console.log(tempSavedFolderName)
+            // console.log(myTabDict)
+            this.contentEditable='false';
+            // this.style.backgroundColor = "white";
+            // if (tempSavedFolderName !== this.innerHTML){
+            //     if(tryCreateNewFolder(this.innerHTML)){
+            //         renameFolder(tempSavedFolderName, this.innerHTML);
+            //         updateURLS(this.innerHTML)
+
+            //     }
+            // }
+        }
     });
 
 }
