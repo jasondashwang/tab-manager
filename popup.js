@@ -39,6 +39,7 @@ function createNewFolder(){
     if (folderName !== ""){
         tryCreateNewFolder(folderName);
         updateFolders();
+        saveData();
     }else{
         alert("Can't have a folder name with all whitespace.")
     }
@@ -493,7 +494,8 @@ function decorateURL(){
  */
 function modifyFolderButtons(){
     $('.folder-buttons').css({"color":"#4582ec", 'height': '50px', 'width': '70px',
-     'border-radius': '10px', "font-size" : "12px"});
+     'border-radius': '10px', "font-size" : "12px", "white-space": "nowrap",
+     "overflow": "hidden", "text-overflow": "ellipsis"});
      
     $('.folders-list-ul').css({"list-style": "none", "display": "block"});
     $('.folders-list-li').css({"display": "inline-block"});
@@ -513,6 +515,14 @@ function getAndCreateFavicon(url){
     return favicon;
 }
 
+function download(content, fileName, contentType) {
+    var a = document.createElement("a");
+    var file = new Blob([content], {type: contentType});
+    a.href = URL.createObjectURL(file);
+    a.download = fileName;
+    a.click();
+}
+
 $(document).ready(function() {
 
     // Activate all the buttons
@@ -525,6 +535,10 @@ $(document).ready(function() {
         toggle_visibility("folders-homepage");
         toggle_visibility("urls");
     }); //back button
+    $("#exportData").click(function(){
+        var content = myTabDict;
+        download(JSON.stringify(content), 'output.json', 'application/json');
+    });
 
     // Get the tabs from storage and set them. 
     chrome.storage.sync.get(['tabDict'], function(result) {
