@@ -278,7 +278,7 @@ function searchForURLAndReturnIndex(a, obj){
  * Saves the myTabDict in local Chrome storage.
  */
 function saveData(){
-    chrome.storage.local.set({'tabDict': myTabDict}, function() {
+    chrome.storage.sync.set({'tabDict': myTabDict}, function() {
         console.log('Value is set to ' + myTabDict);
       });
 }
@@ -307,34 +307,50 @@ function toggle_visibility(id) {
  */
 function makeUL(array) {
     // Create the list element:
-    var list = document.createElement('ul');
-    list.className = "folders-list-ul";
+    if (array.length == 0){
+        var t = document.createTextNode("No folders yet.");
+        return document.createElement('a').appendChild(t)
+    } else {
+        var list = document.createElement('ul');
+        list.className = "folders-list-ul";
 
-    for(var i = 0; i < array.length; i++) {
-        // Create the list item:
-        var item = document.createElement('li');
-        item.style.padding = "5px";
-        item.className = "folders-list-li";
+        for(var i = 0; i < array.length; i++) {
+            // Create the list item:
+            var item = document.createElement('li');
+            item.style.padding = "5px";
+            item.className = "folders-list-li";
 
-        // create the button
-        var btn = document.createElement("button");
-        btn.className = "folder-buttons"; 
-        btn.value = array[i];
-        btn.appendChild(document.createTextNode(array[i]));
+            // create the button
+            var btn = document.createElement("button");
+            btn.className = "folder-buttons"; 
+            btn.value = array[i];
+            btn.appendChild(document.createTextNode(array[i]));
 
-        btn.addEventListener("click", function(){
-            showTabsInFolder(this.value)
-        });
+            btn.addEventListener("click", function(){
+                showTabsInFolder(this.value)
+            });
 
-        // Set its contents:
-        item.appendChild(btn);
+            btn.addEventListener("mouseover", function(){
+                // change the cursor and opacity so you know you can click there
+                $(this).css({"cursor":"pointer", "background-color": "#E5DDEC"});
+            });
 
-        // Add it to the list:
-        list.appendChild(item);
+            // as soon as you stop mouseover, it goes back to opaque
+            btn.addEventListener("mouseout", function(){
+                $(this).css({"background-color": "white"});
+            });
+
+            // Set its contents:
+            item.appendChild(btn);
+
+            // Add it to the list:
+            list.appendChild(item);
+        }
+        
+        // Finally, return the constructed list:
+        return list;    
     }
     
-    // Finally, return the constructed list:
-    return list;
 }
 
 /**
@@ -511,7 +527,7 @@ $(document).ready(function() {
     }); //back button
 
     // Get the tabs from storage and set them. 
-    chrome.storage.local.get(['tabDict'], function(result) {
+    chrome.storage.sync.get(['tabDict'], function(result) {
         console.log('Value currently is ' + result["tabDict"]);
         
         // if there is data, set it to the current dictionary value
