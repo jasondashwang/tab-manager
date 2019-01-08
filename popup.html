@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <title> tab-manager </title>
     <style>
       body {
         min-width: 350px;
         max-width: 100%;
         position: relative;
         align-content: center;
-      }; 
+      }
       button {
         height: 30px;
         width: 30px;
@@ -43,18 +44,15 @@
                   style="padding: 5px; font-size: 12px;">
               </div>
               <div id="folder-buttons" class="bootstrapiso" style="padding-top: 0px"> 
-                  <a class="btn btn-primary btn-sm" value="Create Folder" id="createFolder" style="font-size: 12px" href="#">
+                  <a class="btn btn-primary btn-sm" id="createFolder" style="font-size: 12px" href="#">
                        Create Folder <i class="fas fa-folder-plus"></i> </a>
 
-                  <a class="btn btn-primary btn-sm" value="Delete Folder" id="delFolder" style="font-size: 12px" href="#">
+                  <a class="btn btn-primary btn-sm" id="delFolder" style="font-size: 12px" href="#">
                     Delete Folder <i class="fas fa-folder-minus"></i> </a>
               </div>
           </div>
         </div>
     </div>
-
-
-    <!-- URLs Div -->
     
 
      <!-- URLs Div -->
@@ -70,18 +68,17 @@
 
         <div class="bootstrapiso card bg-light mb-3" style="max-width: 100%;">
             <div class="card-header" style="border-radius: 5px; background-color: #676e6e44; color:white; font-weight: bold; font-size: 12px">Options:</div>
-              <div class="card-body">
+            <div class="card-body">
 
-                  <div> 
-                    <input type="button" class="btn btn-primary btn-sm" value="Back" id="openFoldersView"></input>
-                    <input type="button" class="btn btn-primary btn-sm" value="Save Tab" id="saveTab"></input>
-                    <input type="button" class="btn btn-primary btn-sm" value="Save Window" id="saveWindow"></input>
-                    <input type="button" class="btn btn-primary btn-sm" value="Open folder" id="openLinks"></input>
-                  </div>
-              </div>
+                <div> 
+                  <input type="button" class="btn btn-primary btn-sm" value="Back" id="openFoldersView">
+                  <input type="button" class="btn btn-primary btn-sm" value="Save Tab" id="saveTab">
+                  <input type="button" class="btn btn-primary btn-sm" value="Save Window" id="saveWindow">
+                  <input type="button" class="btn btn-primary btn-sm" value="Open folder" id="openLinks">
+                </div>
+
             </div>
         </div>
-
 
     </div>
     

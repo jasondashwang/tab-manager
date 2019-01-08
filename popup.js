@@ -101,13 +101,18 @@ function showTabsInFolder(folder){
     // mouseover to be able to edit the content
     document.getElementById("curr-folder-name").addEventListener("mouseover", function(){
         this.contentEditable='true';
-        // change the cursor so you know you can click there
-        $("#curr-folder-name").css({"cursor":"pointer"});
+        // change the cursor and opacity so you know you can click there
+        $("#curr-folder-name").css({"cursor":"pointer", "opacity": "0.5"});
+    });
+
+    // as soon as you stop mouseover, it goes back to opaque
+    document.getElementById("curr-folder-name").addEventListener("mouseout", function(){
+        $(this).css({"opacity": "1.0"});
     });
 
     // click to save the current folder name for later, and change background to "edit-mode"
     document.getElementById("curr-folder-name").addEventListener("click", function(){
-        this.style.backgroundColor = "lightblue";
+        // this.style.backgroundColor = "lightblue";
         tempSavedFolderName = this.innerHTML
     });
 
@@ -447,7 +452,7 @@ function createRemoveURLOption(){
         var txt = document.createTextNode("\u00D7");
         span.className = "close";
         span.appendChild(txt);
-        span.style.color = "red";
+        $(span).css({"color":"red", "float": "right"})
         myNodelist[i].appendChild(span);
     }
 

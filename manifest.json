@@ -1,7 +1,7 @@
 {
   "name": "Tab Manager",
   "version": "1.0",
-  "description": "Fill this in Valeria",
+  "description": "Create folders for collections of your chrome tabs to view, edit, and revisit later.",
   "background": {
     "scripts": ["background.js"],
     "persistent": false
