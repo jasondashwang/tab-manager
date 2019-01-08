@@ -16,11 +16,15 @@
       
     </style>
     <link rel="stylesheet" href="Isolate-Bootstrap-4.1-CSS-Themes/css4.1/litera.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+
     
   </head>
   <body>
+    <!-- Folders Div -->
     <div id="folders-homepage" style="display:block;"> 
-
+       <!-- Title and Folders -->
       <div class="bootstrapiso card border-primary mb-3" style="max-width: 100%;">
 
           <div class="card-header" style="border-radius: 5px;background-color: #3c434be5; color: whitesmoke; font-weight:bold;">Your Folders:</div>
@@ -30,6 +34,7 @@
           </div>
       </div>
 
+       <!-- Options -->
       <div class="bootstrapiso card bg-light mb-3" style="max-width: 100%;">
           <div class="card-header" style="border-radius: 5px; background-color: #676e6e44; color:white; font-weight: bold; font-size: 12px">Options:</div>
           <div class="card-body">
@@ -38,32 +43,48 @@
                   style="padding: 5px; font-size: 12px;">
               </div>
               <div id="folder-buttons" class="bootstrapiso" style="padding-top: 0px"> 
-                  <input type="button" value="Create Folder" id="createFolder" class="btn btn-primary btn-sm" style="font-size: 12px"></input>
-                  <input type="button" value="Delete Folder" id="delFolder" class="btn btn-primary btn-sm" style="font-size: 12px"></input>
+                  <a class="btn btn-primary btn-sm" value="Create Folder" id="createFolder" style="font-size: 12px" href="#">
+                       Create Folder <i class="fas fa-folder-plus"></i> </a>
+
+                  <a class="btn btn-primary btn-sm" value="Delete Folder" id="delFolder" style="font-size: 12px" href="#">
+                    Delete Folder <i class="fas fa-folder-minus"></i> </a>
               </div>
           </div>
         </div>
     </div>
 
+
+    <!-- URLs Div -->
     
 
-
+     <!-- URLs Div -->
     <div id="urls" style="display:none;">
-      <h2 id="curr-folder-name" style="display:inline; border-radius: '10px'"></h2>
+        <div class="bootstrapiso card border-primary mb-3" style="max-width: 100%;">
+            
+          <div id="curr-folder-name" class="card-header" style="border-radius: 10px;background-color: #3c434be5; color: whitesmoke; font-weight:bold;">Header</div>
+            <div class="card-body">
+                <div id="urls-list"> Urls in this folder:</div>
+    
+            </div>
+          </div>
 
-      <div id="urls-list"> Urls in this folder:
-        <p>a url will be here!</p>
+        <div class="bootstrapiso card bg-light mb-3" style="max-width: 100%;">
+            <div class="card-header" style="border-radius: 5px; background-color: #676e6e44; color:white; font-weight: bold; font-size: 12px">Options:</div>
+              <div class="card-body">
 
-      </div>
-      <div> 
-        <h4>Options:</h4>
-        <input type="button" value="Back" id="openFoldersView"></input>
-        <input type="button" value="Save Tab" id="saveTab"></input>
-        <input type="button" value="Save Window" id="saveWindow"></input>
-        <input type="button" value="Open folder" id="openLinks"></input>
-      </div>
+                  <div> 
+                    <input type="button" class="btn btn-primary btn-sm" value="Back" id="openFoldersView"></input>
+                    <input type="button" class="btn btn-primary btn-sm" value="Save Tab" id="saveTab"></input>
+                    <input type="button" class="btn btn-primary btn-sm" value="Save Window" id="saveWindow"></input>
+                    <input type="button" class="btn btn-primary btn-sm" value="Open folder" id="openLinks"></input>
+                  </div>
+              </div>
+            </div>
+        </div>
+
 
     </div>
+    
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="popup.js"></script>

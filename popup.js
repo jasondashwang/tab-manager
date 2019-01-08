@@ -88,7 +88,6 @@ function renameFolder(currFolder, newFolder){
  * @param  {string} folder The name of the folder to open
  */
 function showTabsInFolder(folder){
-
     // folders-homepage starts out being visible, and urls being invisible
     toggle_visibility("folders-homepage");
     toggle_visibility("urls");
@@ -115,7 +114,7 @@ function showTabsInFolder(folder){
     // click elsewhere to rename the folder
     $("#curr-folder-name").off('focusout').on('focusout', function() { // off because it was firing n+1 times
         this.contentEditable='false';
-        this.style.backgroundColor = "white";
+        this.style.backgroundColor = "#3c434be5";
         if (tempSavedFolderName !== this.innerHTML){
             if(tryCreateNewFolder(this.innerHTML)){
                 renameFolder(tempSavedFolderName, this.innerHTML);
@@ -244,7 +243,7 @@ function deleteURL(folder, url){
 
     // remove the URL from the "set"
     var indexSet = myTabDict[folder].urlSet.indexOf(url);
-    myTabDict[folder].urlSet.splice(index, 1);
+    myTabDict[folder].urlSet.splice(indexSet, 1);
     // remove the urlObject from the urlList
     var index = searchForURLAndReturnIndex(myTabDict[folder].urlList, url)
     myTabDict[folder].urlList.splice(index, 1);
@@ -342,24 +341,54 @@ function makeUL(array) {
  */
 function makeULforURLS(array) {
     // Create the list element:
-    var list = document.createElement('ul');
+    // var list = document.createElement('ul');
+    
+    var list = document.createElement('div');
+    list.className = "bootstrapiso list-group"
 
     for(var i = 0; i < array.length; i++) {
         // Create the list item:
-        var item = document.createElement('li');
+        // var item = document.createElement('li');
+
+        // item.className = "url-list-li"
+        //////////
+        // var btnGroup = document.createElement('div');
+        // btnGroup.className = "bootstrapiso btn-group"
+
+        // var btnWithURL = document.createElement("button")
+        // btnWithURL.className = "btn btn-secondary btn-sm"
+        // var btnWithDelete = document.createElement("button")
+        // btnWithDelete.className = "btn btn-secondary btn-sm"
+        // var span = document.createElement("span");
+        // span.style.color = "red";
+        // // span.className = "fas fa-trash-alt"
+        // btnWithDelete.appendChild(span.appendChild(document.createTextNode("\u00D7")))
+        
 
         var content = document.createElement('a');
+        content.className = "list-group-item list-group-item-action"
+        $(content).css({"font-size":"12px", "max-width": "90%"});
+        content.id = array[i].url
 
         content.setAttribute('href',array[i].url);
 
         content.innerHTML = array[i].title
 
-        item.id = array[i].url
+        // btnWithURL.appendChild(content);
+
+        // btnGroup.appendChild(btnWithURL)
+        // btnGroup.appendChild(btnWithDelete)
+
+        // item.id = array[i].url
         
-        item.appendChild(content);
+        // item.appendChild(content);
+
+        // item.appendChild(btnGroup)
 
         // Add it to the list:
-        list.appendChild(item);
+        // list.appendChild(item);
+
+        list.appendChild(content);
     }
     
     // Finally, return the constructed list:
@@ -410,10 +439,11 @@ function updateURLS(folder){
  */
 function createRemoveURLOption(){
     // Create a "close" button and append it to each list item
-    var myNodelist = document.getElementById("urls-list").getElementsByTagName("LI");
+    // var myNodelist = document.getElementById("urls-list").getElementsByTagName("LI");
+    var myNodelist = document.getElementById("urls-list").getElementsByTagName("a");
     var i;
     for (i = 0; i < myNodelist.length; i++) {
-        var span = document.createElement("SPAN");
+        var span = document.createElement("span");
         var txt = document.createTextNode("\u00D7");
         span.className = "close";
         span.appendChild(txt);
@@ -445,6 +475,7 @@ function modifyFolderButtons(){
     $('.folders-list-li').css({"display": "inline-block"});
 
 }
+
 /**
  * Finds the favicon for the given website, and creates and 
  * returns it as an image element. 
