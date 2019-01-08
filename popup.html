@@ -3,7 +3,7 @@
   <head>
     <style>
       body {
-        min-width: 310px;
+        min-width: 350px;
         max-width: 100%;
         position: relative;
         align-content: center;
@@ -15,25 +15,37 @@
       }
       
     </style>
+    <link rel="stylesheet" href="Isolate-Bootstrap-4.1-CSS-Themes/css4.1/litera.min.css">
+    
   </head>
   <body>
     <div id="folders-homepage" style="display:block;"> 
-      <h2>Your Folders:</h2>
-        <div id="folders-list">
 
-        </div>
+      <div class="bootstrapiso card border-primary mb-3" style="max-width: 100%;">
 
-        <div> 
-          <h4>Options:</h4>
-          <p id="hehe"></p> 
-          <input placeholder="Enter Folder Name Here" id="newName" style="padding: 5px"></input>
-          <div id="folder-buttons" style="padding-top: 5px"> 
-              <input type="button" value="Create Folder" id="createFolder"></input>
-              <input type="button" value="Delete Folder" id="delFolder"></input>
+          <div class="card-header" style="border-radius: 5px;background-color: #3c434be5; color: whitesmoke; font-weight:bold;">Your Folders:</div>
+
+          <div class="card-body">
+                <div id="folders-list"></div>   
           </div>
-          
+      </div>
+
+      <div class="bootstrapiso card bg-light mb-3" style="max-width: 100%;">
+          <div class="card-header" style="border-radius: 5px; background-color: #676e6e44; color:white; font-weight: bold; font-size: 12px">Options:</div>
+          <div class="card-body">
+              <div class="bootstrapiso form-group">
+                  <input type="text" class="form-control form-control-sm" placeholder="Enter Folder Name Here" id="newName"
+                  style="padding: 5px; font-size: 12px;">
+              </div>
+              <div id="folder-buttons" class="bootstrapiso" style="padding-top: 0px"> 
+                  <input type="button" value="Create Folder" id="createFolder" class="btn btn-primary btn-sm" style="font-size: 12px"></input>
+                  <input type="button" value="Delete Folder" id="delFolder" class="btn btn-primary btn-sm" style="font-size: 12px"></input>
+              </div>
+          </div>
         </div>
     </div>
+
+    
 
 
     <div id="urls" style="display:none;">

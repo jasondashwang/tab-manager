@@ -28,13 +28,20 @@ var myTabDict = {};
 var tempSavedFolderName = "";
 
 /**
- * Creates a new folder according to the input value of the
- * "newName", and updates the list of folders
+ * Trims excess whitespace off the ends of the input, and if the
+ * input is empty, alerts user. Otherwise, creates a new folder 
+ * according to the input value of the "newName", and updates 
+ * the list of folders
  */
 function createNewFolder(){
     var folder = document.getElementById("newName").value;
-    tryCreateNewFolder(folder);
-    updateFolders();
+    var folderName = folder.trim();
+    if (folderName !== ""){
+        tryCreateNewFolder(folderName);
+        updateFolders();
+    }else{
+        alert("Can't have a folder name with all whitespace.")
+    }
 }
 
 /**
@@ -431,12 +438,24 @@ function createRemoveURLOption(){
  * Adds styling to the folder buttons; runs each time folders must be refreshed.
  */
 function modifyFolderButtons(){
-    $('.folder-buttons').css({"color":"green", 'height': '50px', 'width': '70px',
+    $('.folder-buttons').css({"color":"#4582ec", 'height': '50px', 'width': '70px',
      'border-radius': '10px', "font-size" : "12px"});
      
     $('.folders-list-ul').css({"list-style": "none", "display": "block"});
     $('.folders-list-li').css({"display": "inline-block"});
 
+}
+/**
+ * Finds the favicon for the given website, and creates and 
+ * returns it as an image element. 
+ * @param  {string} url
+ */
+function getAndCreateFavicon(url){
+    var favicon = document.createElement('img');
+    // get the url of favicon using favIconUrl function
+    favicon.src = url + "/favicon.ico";
+    // document.body.appendChild(favicon);
+    return favicon;
 }
 
 $(document).ready(function() {
