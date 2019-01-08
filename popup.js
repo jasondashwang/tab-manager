@@ -433,16 +433,17 @@ function updateURLS(folder){
     }
     if (myTabDict[folder].urlList.length != 0){
         document.getElementById('urls-list').appendChild(makeULforURLS(myTabDict[folder].urlList));
-        createRemoveURLOption();
+        decorateURL();
     }
     
 }
 
 /**
  * For each url in the urls list on the front-end-view, adds a red "x" with the 
- * capability to individually remove that URL from the folder.
+ * capability to individually remove that URL from the folder. Also adds the
+ * favicon to the front.
  */
-function createRemoveURLOption(){
+function decorateURL(){
     // Create a "close" button and append it to each list item
     // var myNodelist = document.getElementById("urls-list").getElementsByTagName("LI");
     var myNodelist = document.getElementById("urls-list").getElementsByTagName("a");
@@ -454,6 +455,8 @@ function createRemoveURLOption(){
         span.appendChild(txt);
         $(span).css({"color":"red", "float": "right"})
         myNodelist[i].appendChild(span);
+        myNodelist[i].prepend(getAndCreateFavicon(myNodelist[i].id))
+        
     }
 
     // Click on a close button to hide the current list item
@@ -488,9 +491,9 @@ function modifyFolderButtons(){
  */
 function getAndCreateFavicon(url){
     var favicon = document.createElement('img');
+    $(favicon).css({"padding-right": "7px"});
     // get the url of favicon using favIconUrl function
-    favicon.src = url + "/favicon.ico";
-    // document.body.appendChild(favicon);
+    favicon.src = "http://www.google.com/s2/favicons?domain=" + url
     return favicon;
 }
 
