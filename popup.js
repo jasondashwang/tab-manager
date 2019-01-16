@@ -230,12 +230,15 @@ function addTabToFolder(url, folder){
 /**
  * Deletes all the contents of a folder, and the folder itself.
  * Saves the data and updates front-end view.
+ * 
+ * @param  {string} folder The name of the folder to delete
  */
-function deleteFolder(){
-    var badFolder = document.getElementById("newName").value;
-    delete myTabDict[badFolder];
+function deleteFolder(folder){    
+    delete myTabDict[folder];
     saveData();
     updateFolders();
+    toggle_visibility("folders-homepage");
+    toggle_visibility("urls");
 }
 
 /**
@@ -530,7 +533,15 @@ $(document).ready(function() {
     $("#openLinks").click(openAllTabsFromFolder);
     $("#saveTab").click(saveCurrentTab);
     $("#saveWindow").click(saveWindow);
-    $("#delFolder").click(deleteFolder);
+    $("#delFolder").click(function(){
+        var result = confirm("Are you sure you want to delete this folder?");
+        if (result) {
+            console.log(result);
+            var folderName = document.getElementById("curr-folder-name").innerHTML;
+            console.log(folderName);
+            deleteFolder(folderName);
+        }
+    });
     $("#openFoldersView").click(function(){
         toggle_visibility("folders-homepage");
         toggle_visibility("urls");
