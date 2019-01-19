@@ -58,17 +58,19 @@
 
 
      <!-- URLs Div -->
-    <div id="urls" style="display:none;">
+    <div id="urls" style="display:none; min-height: 300px;">
         <div class="bootstrapiso card border-primary mb-3" style="max-width: 100%;">
 
-          <div id="curr-folder-name" class="card-header" style="border-radius: 10px;background-color: #3c434be5; color: whitesmoke; font-weight:bold;">Header</div>
+          <div id="curr-folder-name" class="card-header" style="border-radius: 10px;background-color: #3c434be5; color: whitesmoke; font-weight:bold; position: fixed;
+          width: 96%;
+          top: 10px; z-index: 1; overflow: hidden;">Header</div>
             <div class="card-body">
                 <div id="urls-list"> Urls in this folder:</div>
             </div>
           </div>
 
           <!-- Options -->
-        <div class="bootstrapiso card bg-light mb-3" style="max-width: 100%;">
+        <div class="bootstrapiso card bg-light mb-3" style="width: 96%; position: fixed; bottom: 0px; z-index: 1; overflow: hidden;">
             <div class="card-header" style="border-radius: 5px; background-color: #676e6e44; color:white; font-weight: bold; font-size: 12px">Options:</div>
             <div class="card-body">
 

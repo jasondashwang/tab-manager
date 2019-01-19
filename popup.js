@@ -370,6 +370,10 @@ function makeULforURLS(array) {
     
     var list = document.createElement('div');
     list.className = "bootstrapiso list-group"
+    $(list).css({"height": "calc(100% - 190px)",
+        "margin-bottom": "150px",
+        "margin-top": "40px",
+        "overflow": "auto",})
 
     for(var i = 0; i < array.length; i++) {
         // Create the list item:
@@ -392,7 +396,7 @@ function makeULforURLS(array) {
 
         var content = document.createElement('a');
         content.className = "list-group-item list-group-item-action"
-        $(content).css({"font-size":"12px", "max-width": "90%"});
+        $(content).css({"font-size":"12px", "max-width": "96%"});
         content.id = array[i].url
 
         content.setAttribute('href',array[i].url);
@@ -536,9 +540,7 @@ $(document).ready(function() {
     $("#delFolder").click(function(){
         var result = confirm("Are you sure you want to delete this folder?");
         if (result) {
-            console.log(result);
             var folderName = document.getElementById("curr-folder-name").innerHTML;
-            console.log(folderName);
             deleteFolder(folderName);
         }
     });
