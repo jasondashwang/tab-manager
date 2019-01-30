@@ -282,7 +282,7 @@ function searchForURLAndReturnIndex(a, obj){
  * Saves the myTabDict in local Chrome storage.
  */
 function saveData(){
-    chrome.storage.sync.set({'tabDict': myTabDict}, function() {
+    chrome.storage.local.set({'tabDict': myTabDict}, function() {
         console.log('Value is set to ' + myTabDict);
       });
 }
@@ -552,7 +552,7 @@ $(document).ready(function() {
     });
 
     // Get the tabs from storage and set them. 
-    chrome.storage.sync.get(['tabDict'], function(result) {
+    chrome.storage.local.get(['tabDict'], function(result) {
         console.log('Value currently is ' + result["tabDict"]);
         
         // if there is data, set it to the current dictionary value
